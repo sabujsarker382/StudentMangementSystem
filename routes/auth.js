@@ -48,4 +48,19 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// Update User Information
+router.put("/update/:id", async (req, res) => {
+  const { name, email } = req.body;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { name, email },
+      { new: true }
+    );
+    res.json(updatedUser);
+  } catch (err) {
+    res.status(500).json({ message: "Error updating user" });
+  }
+});
+
 module.exports = router;
