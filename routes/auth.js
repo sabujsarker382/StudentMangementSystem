@@ -29,25 +29,50 @@ router.post("/signup", async (req, res) => {
 //login router
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
+
   try {
     const user = await User.findOne({ email: email });
-    if (!user) return res.status(404).json({ message: "USer not found " });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
+    if (!isMatch) {
       return res.status(401).json({ message: "Invalid Credentials" });
+    }
+
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
-      {
-        expiresIn: "3d",
-      }
+      { expiresIn: "3d" }
     );
-    res.json({ token, role: user.role });
+
+    res.json({
+      message: "Login successful",
+      token,
+      role: user.role,
+      userId: user._id,
+    });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Server Error" });
   }
 });
 
+//Get student by id
+router.get("/student/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const student = await User.findById(id);
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+    res.json(student);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching student data" });
+  }
+});
 // Update User Information
 router.put("/update/:id", async (req, res) => {
   const { name, email } = req.body;

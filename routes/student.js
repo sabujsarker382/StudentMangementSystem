@@ -3,7 +3,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const router = express.Router();
 
-//  adding student
+//  adding a student by teacher
 router.post("/add", async (req, res) => {
   const { name, email, password, role = "student" } = req.body;
   try {
@@ -21,7 +21,7 @@ router.post("/add", async (req, res) => {
   }
 });
 
-// Get All Students
+// Get All Students by teacher
 router.get("/", async (req, res) => {
   try {
     const students = await User.find({ role: "student" });
@@ -31,7 +31,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Delete a Student
+// Delete a Student only teacher
 router.delete("/:id", async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
